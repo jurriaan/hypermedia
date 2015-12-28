@@ -1,0 +1,2 @@
+defmodule Hypermedia do
+end
