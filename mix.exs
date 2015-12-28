@@ -37,7 +37,10 @@ defmodule Hypermedia.Mixfile do
       maintainers: ["Jurriaan Pruis <email@jurriaanpruis.nl>"],
       files: ["lib", "mix.exs", "README*", "LICENSE*"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/jurriaan/hypermedia"}
+      links: %{
+        "GitHub" => "https://github.com/jurriaan/hypermedia",
+        "Docs" => "https://hexdocs.pm/hypermedia/"
+      }
     ]
   end
 end
