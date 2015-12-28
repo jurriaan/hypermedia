@@ -34,7 +34,7 @@ defmodule Hypermedia.Mixfile do
 
   defp package do
     [
-      maintainers: ["Jurriaan Pruis <email@jurriaanpruis.nl>"],
+      maintainers: ["Jurriaan Pruis"],
       files: ["lib", "mix.exs", "README*", "LICENSE*"],
       licenses: ["MIT"],
       links: %{
