@@ -2,6 +2,11 @@
 
 Library for creating a HAL/JSON hypermedia API using Elixir
 
+## Links
+
+- [Documentation](https://hexdocs.pm/hypermedia/)
+- [Hex.pm](https://hex.pm/packages/hypermedia)
+
 ## Installation
 
   1. Add hypermedia to your list of dependencies in `mix.exs`:
