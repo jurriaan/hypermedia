@@ -39,6 +39,16 @@ defmodule Hypermedia.Representable do
 
   @doc ~S"""
   Defines a property on the representer
+
+  ## Examples
+
+     iex> defmodule PropertyDocTest do
+     iex>   use Hypermedia.Representable
+     iex>   property :test
+     iex> end
+     iex> Hypermedia.Representable.to_map(%{test: true}, PropertyDocTest)
+     %{"test" => true}
+
   """
   defmacro property(name) do
     attribute = {:property, name}
@@ -54,6 +64,16 @@ defmodule Hypermedia.Representable do
 
   @doc ~S"""
   Defines a link on the representer
+
+  ## Examples
+
+      iex> defmodule LinkDocTest do
+      iex>   use Hypermedia.Representable
+      iex>   link :self, do: "/#{represented.test}"
+      iex> end
+      iex> Hypermedia.Representable.to_map(%{test: "yup"}, LinkDocTest)
+      %{ "_links" => %{"self" => %{"href" => "https://example.org/yup"}}}
+
   """
   defmacro link(name, opts \\ [], do: block) do
     attribute = {:link, name}
