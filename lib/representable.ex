@@ -1,4 +1,6 @@
 defmodule Hypermedia.Representable do
+  alias Hypermedia.Util
+
   @moduledoc ~S"""
   HAL/JSON Representable module
 
@@ -10,7 +12,7 @@ defmodule Hypermedia.Representable do
       iex>   link :self, do: "/"
       iex> end
       iex> Hypermedia.Representable.to_map(%{test: true}, TestRepresenter)
-      %{ "_links" => %{"self" => %{"href" => "/"}}, "test" => true }
+      %{ "_links" => %{"self" => %{"href" => "https://example.org/"}}, "test" => true }
 
   """
 
@@ -116,13 +118,15 @@ defmodule Hypermedia.Representable do
   ## Examples
 
       iex> map = Hypermedia.Representable.add_link(%{}, :self, %{"href" => "/api"})
-      %{ "_links" => %{"self" => %{"href" => "/api"}} }
+      %{ "_links" => %{"self" => %{"href" => "https://example.org/api"}} }
       iex> Hypermedia.Representable.add_link(map, :next, %{"href" => "/api?p=2", "title" => "Page 2"})
-      %{ "_links" => %{"self" => %{"href" => "/api"}, "next" => %{"href" => "/api?p=2", "title" => "Page 2"}} }
+      %{ "_links" => %{"self" => %{"href" => "https://example.org/api"}, "next" => %{"href" => "https://example.org/api?p=2", "title" => "Page 2"}} }
 
   """
-  def add_link(map, link, value) do
-    links = Map.put(Map.get(map, "_links", %{}), to_string(link), value)
+  def add_link(map, link, value = %{"href" => href}) do
+    base = Application.get_env(:hypermedia, :base_uri)
+    uri = Util.uri_join(base, href)
+    links = Map.put(Map.get(map, "_links", %{}), to_string(link), %{value | "href" => uri})
     Map.put(map, "_links", links)
   end
 
@@ -137,7 +141,7 @@ defmodule Hypermedia.Representable do
       iex>   link :self, do: "/"
       iex> end
       iex> Hypermedia.Representable.to_map(%{test: true}, Test)
-      %{ "_links" => %{"self" => %{"href" => "/"}}, "test" => true }
+      %{ "_links" => %{"self" => %{"href" => "https://example.org/"}}, "test" => true }
 
   """
   def to_map(model, module) do

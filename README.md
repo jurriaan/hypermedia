@@ -1,6 +1,8 @@
 # Hypermedia [![Build Status](https://travis-ci.org/jurriaan/hypermedia.svg?branch=master)](https://travis-ci.org/jurriaan/hypermedia)
 
-Library for creating a HAL/JSON hypermedia API using Elixir
+Library for creating a HAL/JSON hypermedia API using Elixir.
+
+This library is inspired by [roar](https://github.com/apotonick/roar).
 
 ## Links
 

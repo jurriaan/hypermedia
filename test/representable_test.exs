@@ -13,9 +13,9 @@ defmodule RepresentableTest do
   end
 
   test "representable works for properties" do
-    assert PropTest.to_map(%{one: true, three: 23.5}) == %{"one" => true, "three" => 23.5, "_links" => %{"self" => %{"href" => "/test"}}}
-    assert PropTest.to_map(%{one: 1, two: 2, three: 3}) == %{"one" => 1, "two" => 2, "three" => 3, "_links" => %{"self" => %{"href" => "/test"}}}
-    assert PropTest.to_map(%{}) == %{"_links" => %{"self" => %{"href" => "/test"}}}
+    assert PropTest.to_map(%{one: true, three: 23.5}) == %{"one" => true, "three" => 23.5, "_links" => %{"self" => %{"href" => "https://example.org/test"}}}
+    assert PropTest.to_map(%{one: 1, two: 2, three: 3}) == %{"one" => 1, "two" => 2, "three" => 3, "_links" => %{"self" => %{"href" => "https://example.org/test"}}}
+    assert PropTest.to_map(%{}) == %{"_links" => %{"self" => %{"href" => "https://example.org/test"}}}
   end
 
   defmodule LinkTest do
@@ -41,10 +41,10 @@ defmodule RepresentableTest do
   end
 
   test "representable works for links" do
-    assert LinkTest.to_map(%{:prop => "value"}) == %{"_links" => %{"self" => %{"href" => "/api"},
-                                                                 "title" => %{"href" => "/title", "title" => "I do have a title"},
-                                                                 "prop" => %{"href" => "/prop/value"},
-                                                                 "resources" => %{"href" => "/resources", "title" => "Title: value"},
-                                                                 "resource" => %{"href" => "/resource/{id}", "templated" => true}}}
+    assert LinkTest.to_map(%{:prop => "value"}) == %{"_links" => %{"self" => %{"href" => "https://example.org/api"},
+                                                                 "title" => %{"href" => "https://example.org/title", "title" => "I do have a title"},
+                                                                 "prop" => %{"href" => "https://example.org/prop/value"},
+                                                                 "resources" => %{"href" => "https://example.org/resources", "title" => "Title: value"},
+                                                                 "resource" => %{"href" => "https://example.org/resource/{id}", "templated" => true}}}
   end
 end
