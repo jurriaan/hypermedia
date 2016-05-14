@@ -42,12 +42,12 @@ defmodule Hypermedia.Representable do
 
   ## Examples
 
-     iex> defmodule PropertyDocTest do
-     iex>   use Hypermedia.Representable
-     iex>   property :test
-     iex> end
-     iex> Hypermedia.Representable.to_map(%{test: true}, PropertyDocTest)
-     %{"test" => true}
+    iex> defmodule PropertyDocTest do
+    iex>   use Hypermedia.Representable
+    iex>   property :test
+    iex> end
+    iex> Hypermedia.Representable.to_map(%{test: true}, PropertyDocTest)
+    %{"test" => true}
 
   """
   defmacro property(name) do
@@ -58,6 +58,38 @@ defmodule Hypermedia.Representable do
 
       def unquote(method_name(attribute))(model) do
         Map.get(model, unquote(name))
+      end
+    end
+  end
+
+  @doc ~S"""
+  Defines an embedded property on the representer
+
+  ## Examples
+
+    iex> defmodule TestUserRepresenter do
+    iex>   use Hypermedia.Representable
+    iex>   property :email
+    iex> end
+    iex> defmodule EmbeddedPropertyDocTest do
+    iex>   use Hypermedia.Representable
+    iex>   embedded_property :user, TestUserRepresenter
+    iex> end
+    iex> Hypermedia.Representable.to_map(%{:user => %{:email => "example@example.com"}}, EmbeddedPropertyDocTest)
+    %{"_embedded" => %{"user" => %{"email" => "example@example.com"}}}
+
+  """
+  defmacro embedded_property(name, presenter) do
+    attribute = {:embedded_property, name}
+
+    quote do
+      @attributes unquote(attribute)
+
+      def unquote(method_name(attribute))(model) do
+        case Map.get(model, unquote(name), nil) do
+          nil -> nil
+          value -> Hypermedia.Representable.to_map(value, unquote(presenter))
+        end
       end
     end
   end
@@ -131,6 +163,7 @@ defmodule Hypermedia.Representable do
   def method_name({type, name}), do: method_name(type, name)
   def method_name(:link, name), do: String.to_atom("__link__#{name}")
   def method_name(:property, name), do: String.to_atom("#{name}")
+  def method_name(:embedded_property, name), do: String.to_atom("#{name}")
 
   @doc ~S"""
   Adds a link to a map
@@ -148,6 +181,20 @@ defmodule Hypermedia.Representable do
     uri = Util.uri_join(base, href)
     links = Map.put(Map.get(map, "_links", %{}), to_string(link), %{value | "href" => uri})
     Map.put(map, "_links", links)
+  end
+
+  @doc ~S"""
+  Adds an embedded resource to a map
+
+  ## Examples
+
+      iex> Hypermedia.Representable.add_embed(%{}, :user, %{"email" => "example@example.com"})
+      %{ "_embedded" => %{"user" => %{"email" => "example@example.com"}} }
+
+  """
+  def add_embed(map, embed, value) do
+    embeds = Map.put(Map.get(map, "_embedded", %{}), to_string(embed), value)
+    Map.put(map, "_embedded", embeds)
   end
 
   @doc ~S"""
@@ -173,4 +220,5 @@ defmodule Hypermedia.Representable do
   defp process_attribute(map, _, nil), do: map
   defp process_attribute(map, {:link, key}, value), do: add_link(map, key, value)
   defp process_attribute(map, {:property, key}, value), do: Map.put(map, to_string(key), value)
+  defp process_attribute(map, {:embedded_property, key}, value), do: add_embed(map, key, value)
 end

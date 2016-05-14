@@ -47,4 +47,20 @@ defmodule RepresentableTest do
                                                                  "resources" => %{"href" => "https://example.org/resources", "title" => "Title: value"},
                                                                  "resource" => %{"href" => "https://example.org/resource/{id}", "templated" => true}}}
   end
+
+  defmodule UserTest do
+    use Hypermedia.Representable
+
+    property :email
+  end
+
+  defmodule EmbedTest do
+    use Hypermedia.Representable
+
+    embedded_property :user, UserTest
+  end
+
+  test "representable works for embeds" do
+    assert EmbedTest.to_map(%{:user => %{:email => "example@example.com" }}) == %{"_embedded" => %{"user" => %{"email" => "example@example.com"}}}
+  end
 end
